@@ -310,10 +310,9 @@ public abstract class Entity implements Comparable<Entity> {
 		move(Vec2D.sub(newPos, aabb.getCenter()));
 	}
 	
-	public void animate(int dx, int dy, double dt) {
-		setDirection(dx, dy);
+	public void animate(boolean moving, double dt) {
 		currentDelayTime+=dt;
-		if (dy!=0 || dx!=0) {
+		if (moving) {
 			if (currentDelayTime>=animationDelayLength) {
 				currentDelayTime-=animationDelayLength;
 				animationStep=(animationStep+1)%animationLength;

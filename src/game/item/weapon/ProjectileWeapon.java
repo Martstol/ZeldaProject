@@ -27,16 +27,16 @@ public class ProjectileWeapon extends Weapon {
 			Vec2D pos=new Vec2D(usedBy.getCenterPos());
 			switch(dir) {
 			case Direction.DOWN:
-				pos.add(0, 0.5*usedBy.getHeight());
+				pos.add(0, 0.5*(usedBy.getHeight()+e.getHeight()));
 				break;
 			case Direction.UP:
-				pos.add(0, -0.5*usedBy.getHeight());
+				pos.add(0, -0.5*(usedBy.getHeight()+e.getHeight()));
 				break;
 			case Direction.LEFT:
-				pos.add(-0.5*usedBy.getWidth(), 0);
+				pos.add(-0.5*(usedBy.getWidth()+e.getWidth()), 0);
 				break;
 			case Direction.RIGHT:
-				pos.add(0.5*usedBy.getWidth(), 0);
+				pos.add(0.5*(usedBy.getWidth()+e.getWidth()), 0);
 				break;
 			default:
 				throw new RuntimeException("Invalid direction: "+dir);

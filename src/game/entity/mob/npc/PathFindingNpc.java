@@ -46,7 +46,8 @@ public class PathFindingNpc extends NPC {
 				ny=-1;
 			}
 			setVelocity(nx, ny, dt);
-			animate(nx, ny, dt);
+			setDirection(nx, ny);
+			animate(nx!=0 || ny!=0, dt);
 			collisionResolution(collisionDetection(game.getMap()));
 			move();
 			

@@ -65,6 +65,7 @@ public class ProjectileEntity extends Entity {
 
 	@Override
 	public void tick(Game game, double dt) {
+		animate(true, dt);
 		if(boomerangBehaviour) {
 			setBoomerangVelocity(dt);
 			boomerangCollisionResolution(collisionDetection(game.getMap()));
