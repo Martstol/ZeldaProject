@@ -12,6 +12,8 @@ import java.util.Stack;
 
 public class Path {
 	
+	public static final Stack<Node> emptyPath = new Stack<Node>();
+	
 	public static Stack<Node> aStar(double startX, double startY, double goalX, double goalY, Map map) {
 		
 		// The actual distance from the start to the node. G score.
@@ -58,7 +60,7 @@ public class Path {
 				}
 			}
 		}
-		return null;
+		return Path.emptyPath;
 	}
 	
 	/**

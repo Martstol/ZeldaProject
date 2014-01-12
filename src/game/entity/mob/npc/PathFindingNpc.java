@@ -10,7 +10,7 @@ import java.util.Stack;
 
 public class PathFindingNpc extends NPC {
 	
-	private Stack<Node> path=new Stack<Node>();
+	private Stack<Node> path=Path.emptyPath;
 	private double attackRange=1;
 	
 	public PathFindingNpc(double x, double y, double maxVelocity, String spritesetName, int spriteWidth, int spriteHeight, int maxHealth,
@@ -64,11 +64,11 @@ public class PathFindingNpc extends NPC {
 		switch(getState()) {
 		case Idle:
 			Player p=game.getPlayer();
-			double d=attackRange+p.getWidth()*0.5+getWidth()*0.5;
+			double d=(attackRange+p.getWidth()+getWidth())*0.5;
 			if(p.getCenterPos().distanceToSq(getCenterPos()) < d*d) {
-				path=new Stack<Node>();
+				path=Path.emptyPath;
 				// Attack!
-			} else {				
+			} else {
 				pathfindToPlayer(game, dt);
 			}
 			break;
