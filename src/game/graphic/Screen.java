@@ -14,6 +14,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class Screen {
 	
@@ -116,8 +118,12 @@ public class Screen {
 			}
 		}
 		
-		//TODO Filter out entities that are not visible and sort them
+		ArrayList<Entity> entities=new ArrayList<>(map.getEntities().size());
 		for(Entity e : map.getEntities()) {
+			entities.add(e); //TODO Only add visible entities
+		}
+		Collections.sort(entities);
+		for(Entity e : entities) {
 			g.drawImage(e.getSprite(), (int)(e.getSpriteX()*tileWidth)-xOffset, (int)(e.getSpriteY()*tileHeight)-yOffset, null);
 			if(InputHandler.debug) {
 				g.setColor(Color.RED);
