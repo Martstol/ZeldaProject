@@ -2,6 +2,8 @@ package game.map;
 
 import game.Constants;
 import game.Game;
+import game.container.Element;
+import game.container.GameLinkedList;
 import game.entity.Entity;
 import game.entity.mob.Player;
 import game.entity.mob.npc.PathFindingNpc;
@@ -9,9 +11,6 @@ import game.sound.AudioPlayer;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 public class Map {
@@ -21,17 +20,17 @@ public class Map {
 	private int width;
 	private Tile[] tiles;
 	private ArrayList<Tileset> tilesets;
-	private LinkedList<Entity> entities;
-	private LinkedList<Entity> addEntities;
+	private GameLinkedList<Entity> entities;
+	private GameLinkedList<Entity> addEntities;
 	
 	public Map(int width, int height, Player player) {
 		this.width=width;
 		this.height=height;
 		tiles=new Tile[width*height];
 		tilesets=new ArrayList<Tileset>(1);
-		entities=new LinkedList<Entity>();
-		addEntities=new LinkedList<Entity>();
-		entities.add(player);
+		entities=new GameLinkedList<>();
+		addEntities=new GameLinkedList<>();
+		entities.addFirst(player);
 		
 		//TODO DEBUG
 		Tileset tileset=new Tileset("Forest", "light forest");
@@ -47,12 +46,12 @@ public class Map {
 				}
 			}
 		}
-		entities.add(new PathFindingNpc(0, 0, Constants.DEFAULT_ENTITY_MAX_VEL*0.8, "green knight", 18, 28, 20, 1, 12, 1));
+		entities.addFirst(new PathFindingNpc(0, 0, Constants.DEFAULT_ENTITY_MAX_VEL*0.8, "green knight", 18, 28, 20, 1, 12, 1));
 		AudioPlayer.getPlayer().playBgm("dark world");
 	}
 	
 	public void addEntity(Entity e) {
-		addEntities.add(e);
+		addEntities.addFirst(e);
 	}
 	
 	public void removeEntity(Entity e) {
@@ -84,22 +83,21 @@ public class Map {
 		return height;
 	}
 	
-	public List<Entity> getEntities() {
+	public GameLinkedList<Entity> getEntities() {
 		return entities;
 	}
 	
 	public void tick(Game game, double dt) {
-		if(!addEntities.isEmpty()) {
-			entities.addAll(addEntities);
-			addEntities=new LinkedList<Entity>();
-		}
-		for(Iterator<Entity> it=entities.iterator(); it.hasNext();) {
-			Entity e=it.next();
+		entities.moveGLL(addEntities);
+		Element<Entity> el=entities.getHeadElement();
+		while(el != null) {
+			Entity e=el.getData();
 			if(e.shouldBeRemoved()) {
-				it.remove();
+				entities.remove(el);
 			} else {
 				e.tick(game, dt);
 			}
+			el=el.getNext();
 		}
 	}
 

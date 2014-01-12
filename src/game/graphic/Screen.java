@@ -14,8 +14,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
 
 public class Screen {
 	
@@ -118,10 +116,8 @@ public class Screen {
 			}
 		}
 		
-		//TODO Filter out entities that are not visible
-		List<Entity> entities = map.getEntities();
-		Collections.sort(entities); //Entities must be sorted so that entities in front of other entities are drawn above, the list can't be sorted on insertion because it is dynamically changing
-		for(Entity e : entities) {
+		//TODO Filter out entities that are not visible and sort them
+		for(Entity e : map.getEntities()) {
 			g.drawImage(e.getSprite(), (int)(e.getSpriteX()*tileWidth)-xOffset, (int)(e.getSpriteY()*tileHeight)-yOffset, null);
 			if(InputHandler.debug) {
 				g.setColor(Color.RED);

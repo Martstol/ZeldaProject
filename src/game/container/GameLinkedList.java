@@ -1,6 +1,8 @@
 package game.container;
 
-public class GameLinkedList<E> {
+import java.util.Iterator;
+
+public class GameLinkedList<E> implements Iterable<E> {
 	
 	private Element<E> head;
 	private Element<E> tail;
@@ -19,9 +21,47 @@ public class GameLinkedList<E> {
 		return tail;
 	}
 	
+	public void remove(Element<E> el) {
+		if(el==head) {
+			popFirst();
+		} else if (el==tail) {
+			popLast();
+		} else {
+			el.prev.next=el.next;
+			el.next.prev=el.prev;
+		}
+	}
+	
+	/**
+	 * Move the content from the input list into this list. The input list will be empty afterwards.
+	 * Nothing is done if the input list is empty.
+	 * @param list - input list
+	 */
+	public void moveGLL(GameLinkedList<E> list) {
+		if(list.isEmpty()) {
+			return;
+		}
+		this.count+=list.count;
+		if(this.head==null) {
+			this.head=list.head;
+			this.tail=list.tail;
+		} else {
+			this.tail.next=list.head;
+			list.head.prev=this.tail;
+			this.tail=list.tail;
+		}
+		list.clear();
+	}
+	
+	public void clear() {
+		head=tail=null;
+		count=0;
+	}
+	
 	public void addFirst(E e) {
 		Element<E> el = new Element<>();
 		el.data=e;
+		count+=1;
 		if(head==null) {
 			head=tail=el;
 		} else {
@@ -34,6 +74,7 @@ public class GameLinkedList<E> {
 	public void addLast(E e) {
 		Element<E> el = new Element<>();
 		el.data=e;
+		count+=1;
 		if(tail==null) {
 			head=tail=el;
 		} else {
@@ -60,7 +101,8 @@ public class GameLinkedList<E> {
 	}
 	
 	public E peekFirst() {
-		return head.data;
+		if(head==null) return null;
+		else return head.data;
 	}
 	
 	public E popLast() {
@@ -80,7 +122,8 @@ public class GameLinkedList<E> {
 	}
 	
 	public E peekLast() {
-		return tail.data;
+		if(tail==null) return null;
+		else return tail.data;
 	}
 	
 	public boolean isEmpty() {
@@ -102,10 +145,9 @@ public class GameLinkedList<E> {
 		return sb.toString();
 	}
 
-}
+	@Override
+	public Iterator<E> iterator() {
+		return new GLLIterator<>(this);
+	}
 
-class Element<E> {
-	Element<E> next;
-	Element<E> prev;
-	E data;
 }
