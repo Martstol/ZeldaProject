@@ -73,6 +73,10 @@ public class AABB { // Axis Aligned Bounding Box
 		return new Rectangle2D.Double(getX()+dx, getY()+dy, getWidth(), getHeight()).intersects(x, y, w, h);
 	}
 	
+	public boolean contains(AABB other) {
+		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()).contains(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+	}
+	
 	@Override
 	public String toString() {
 		return "["+getX()+", "+getY()+", "+getWidth()+", "+getHeight()+"]";

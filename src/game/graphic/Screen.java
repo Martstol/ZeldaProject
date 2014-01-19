@@ -118,12 +118,8 @@ public class Screen {
 			}
 		}
 		
-		ArrayList<Entity> entities=new ArrayList<>(map.getEntities().size());
+		Collections.sort(map.getEntities());
 		for(Entity e : map.getEntities()) {
-			entities.add(e); //TODO Only add visible entities
-		}
-		Collections.sort(entities);
-		for(Entity e : entities) {
 			g.drawImage(e.getSprite(), (int)(e.getSpriteX()*tileWidth)-xOffset, (int)(e.getSpriteY()*tileHeight)-yOffset, null);
 			if(InputHandler.debug) {
 				g.setColor(Color.RED);
