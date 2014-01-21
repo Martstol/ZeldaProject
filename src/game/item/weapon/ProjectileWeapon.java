@@ -17,7 +17,7 @@ public class ProjectileWeapon extends Weapon {
 	@Override
 	public void attackTick(Entity usedBy, Game game) {
 		if(projectile!=null) {
-			ProjectileEntity e = new ProjectileEntity(projectile);
+			ProjectileEntity e = projectile.copy();
 			e.setWeapon(this);
 			e.setSource(usedBy);
 			

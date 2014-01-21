@@ -2,6 +2,7 @@ package game.container.quadtree;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import game.algorithms.collision.AABB;
 import game.entity.Entity;
@@ -14,7 +15,7 @@ public class Quad {
 	private static final int NW=0, NE=1, SW=2, SE=3;
 	
 	private int level;
-	private LinkedList<Entity> entities;
+	private List<Entity> entities;
 	private AABB boundary;
 	private Quad[] children;
 	private boolean split;
@@ -38,7 +39,7 @@ public class Quad {
 			for(int i=0; i<children.length; i++) {
 				children[i].clear();
 				children[i]=null;
-			}				
+			}
 		}
 	}
 	

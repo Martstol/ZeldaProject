@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import game.Constants;
 import game.Game;
 import game.io.Keys;
+import game.item.weapon.BoomerangEntity;
 import game.item.weapon.ProjectileEntity;
 import game.item.weapon.ProjectileWeapon;
 import game.item.weapon.Sword;
@@ -20,8 +21,8 @@ public class Player extends Mob {
 				Constants.PLAYER_START_HEALTH, false);
 		this.keys=keys;
 		//weapon=new Sword("hero sword", "", 1, Math.PI/3, 1, 10, Constants.PLAYER_SPRITE_WIDTH, Constants.PLAYER_SPRITE_HEIGHT, "sword1");
-		//ProjectileEntity projectile=new ProjectileEntity(1/16.0, 1/16.0, 10, "arrow", 29, 29, 1.2);
-		ProjectileEntity projectile=new ProjectileEntity(10/16.0, 10/16.0, 8, "boomerang", 10, 10, 5, 1);
+		ProjectileEntity projectile=new ProjectileEntity(1/16.0, 1/16.0, 10, "arrow", 29, 29, 1.2);
+		//ProjectileEntity projectile=new BoomerangEntity(10/16.0, 10/16.0, 8, "boomerang", 10, 10, 5, 1);
 		weapon = new ProjectileWeapon("hero bow", "", 1, 10, Constants.PLAYER_SPRITE_WIDTH, Constants.PLAYER_SPRITE_HEIGHT, "bow1", projectile);
 	}
 	
