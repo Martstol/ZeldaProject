@@ -3,7 +3,8 @@ package game;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import game.entity.mob.Player;
+import game.entity.mob.Mob;
+import game.entity.mob.PlayerHandler;
 import game.graphic.gui.Button;
 import game.graphic.gui.Gui;
 import game.graphic.gui.Textbox;
@@ -15,7 +16,7 @@ public class Game implements ActionListener {
 	public enum GameState{Playing, ShowText, IngameMenu, MainMenu};
 	
 	private GameState state;
-	private Player player;
+	private Mob player;
 	private Gui gui;
 	private Map map;
 	
@@ -24,11 +25,13 @@ public class Game implements ActionListener {
 		gui=new Gui(keys, this);
 		
 		//TODO This is just debug stuff
-		player=new Player(10, 0, keys);
+		player=new Mob(10, 0, Constants.PLAYER_SPRITESET_NAME, Constants.PLAYER_SPRITE_WIDTH, 
+				Constants.PLAYER_SPRITE_HEIGHT, Constants.PLAYER_START_HEALTH, Constants.PLAYER_MAX_VELOCITY, 
+				new PlayerHandler(keys));
 		map=new Map(100, 100, player);
 	}
 	
-	public Player getPlayer() {
+	public Mob getPlayer() {
 		return player;
 	}
 	

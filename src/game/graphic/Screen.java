@@ -3,7 +3,7 @@ package game.graphic;
 import game.Constants;
 import game.Game;
 import game.entity.Entity;
-import game.entity.mob.Player;
+import game.entity.mob.Mob;
 import game.io.InputHandler;
 import game.map.Map;
 
@@ -14,7 +14,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 
 public class Screen {
@@ -74,7 +73,7 @@ public class Screen {
 	private void renderGame(Game game, Graphics2D g) {
 		//Get the data from the game
 		Map map=game.getMap();
-		Player player=game.getPlayer();
+		Mob player=game.getPlayer();
 		double playerX=player.getX();
 		double playerY=player.getY();
 		int mapWidth=map.getWidth();

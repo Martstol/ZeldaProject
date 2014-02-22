@@ -3,8 +3,8 @@ package game.map;
 import game.Constants;
 import game.Game;
 import game.entity.Entity;
-import game.entity.mob.Player;
-import game.entity.mob.npc.PathFindingNpc;
+import game.entity.mob.Mob;
+import game.entity.mob.npc.NpcHandler;
 import game.sound.AudioPlayer;
 
 import java.awt.image.BufferedImage;
@@ -23,7 +23,7 @@ public class Map {
 	private LinkedList<Entity> entities;
 	private LinkedList<Entity> addEntities;
 	
-	public Map(int width, int height, Player player) {
+	public Map(int width, int height, Mob player) {
 		this.width=width;
 		this.height=height;
 		tiles=new Tile[width*height];
@@ -46,7 +46,8 @@ public class Map {
 				}
 			}
 		}
-		entities.add(new PathFindingNpc(0, 0, Constants.DEFAULT_ENTITY_MAX_VEL*0.8, "green knight", 18, 28, 20, 1, 12, 1));
+		entities.add(new Mob(0, 0, "green knight", 18, 28, 20, 
+				Constants.DEFAULT_ENTITY_MAX_VEL*0.8, new NpcHandler()));
 		AudioPlayer.getPlayer().playBgm("dark world");
 	}
 	

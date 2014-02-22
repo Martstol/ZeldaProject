@@ -1,11 +1,10 @@
 package game.container.quadtree;
 
+import game.algorithms.collision.AABB;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
-import game.algorithms.collision.AABB;
-import game.entity.Entity;
 
 public class Quad {
 	
@@ -15,7 +14,7 @@ public class Quad {
 	private static final int NW=0, NE=1, SW=2, SE=3;
 	
 	private int level;
-	private List<Entity> entities;
+	private List<AABB> aabbs;
 	private AABB boundary;
 	private Quad[] children;
 	private boolean split;
@@ -26,14 +25,14 @@ public class Quad {
 	
 	private Quad(int level, AABB boundary) {
 		this.level=level;
-		entities=new LinkedList<>();
+		aabbs=new LinkedList<>();
 		this.boundary = boundary;
 		children=new Quad[4];
 		split=false;
 	}
 	
 	public void clear() {
-		entities.clear();
+		aabbs.clear();
 		if(split) {
 			split=false;
 			for(int i=0; i<children.length; i++) {
@@ -47,10 +46,11 @@ public class Quad {
 		if(split) {
 			throw new RuntimeException("Quad is already split.");
 		}
+		
 		double x=boundary.getX();
 		double y=boundary.getY();
-		double w=boundary.getWidth()/2;
-		double h=boundary.getHeight()/2;
+		double w=0.5*boundary.getWidth();
+		double h=0.5*boundary.getHeight();
 		
 		children[NW] = new Quad(level+1, new AABB(x, y, w, h));
 		children[NE] = new Quad(level+1, new AABB(x+w, y, w, h));
@@ -65,52 +65,52 @@ public class Quad {
 	 * Determine which child Quad the entity belongs to.
 	 * -1 means the entity cannot completely fit within a child Quad.
 	 * 
-	 * @param e - the Entity to test for
-	 * @return the Quad the entity e belongs to
+	 * @param a - the AABB to test for
+	 * @return the Quad the entity a belongs to
 	 */
-	private int getIndex(Entity e) {
+	private int getIndex(AABB a) {
 		if(!split) {
 			throw new RuntimeException("Quad is not split.");
-		} else if(children[NW].boundary.contains(e.getAABB())) {
+		} else if(children[NW].boundary.contains(a)) {
 			return NW;
-		} else if(children[NE].boundary.contains(e.getAABB())) {
+		} else if(children[NE].boundary.contains(a)) {
 			return NE;
-		} else if(children[SW].boundary.contains(e.getAABB())) {
+		} else if(children[SW].boundary.contains(a)) {
 			return SW;
-		} else if(children[SE].boundary.contains(e.getAABB())) {
+		} else if(children[SE].boundary.contains(a)) {
 			return SE;
 		} else {
 			return -1;
 		}
 	}
 	
-	public void insert(Entity e) {
+	public void insert(AABB a) {
 		// If this Quad has any children (is split),
 		// try to add the entity to the child Quads.
 		if(split) {
-			int i = getIndex(e);
+			int i = getIndex(a);
 			if(i!=-1) {
-				children[i].insert(e);
+				children[i].insert(a);
 				return;
 			}
 		}
 		// This Quad had no children or the entity did not fit into any of the children.
-		entities.add(e);
+		aabbs.add(a);
 		
 		// If this Quad has gone over the Quad capacity and it is not at max level,
 		// we want to split if we haven't already and then move all of this Quad's
 		// elements to the child Quads.
-		if(entities.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
+		if(aabbs.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
 			if(!split) {
 				split();
 			}
 			
-			Iterator<Entity> it = entities.iterator();
+			Iterator<AABB> it = aabbs.iterator();
 			while(it.hasNext()) {
-				Entity en=it.next();
-				int i=getIndex(en);
+				AABB aabb=it.next();
+				int i=getIndex(aabb);
 				if(i!=-1) {
-					children[i].insert(en);
+					children[i].insert(aabb);
 					it.remove();
 				}
 			}
@@ -123,13 +123,13 @@ public class Quad {
 	 * @param e - Entity to check with
 	 * @return list of possible collisions
 	 */
-	public LinkedList<Entity> retrieve(Entity e) {
-		LinkedList<Entity> list = new LinkedList<>();
+	public LinkedList<AABB> retrieve(AABB a) {
+		LinkedList<AABB> list = new LinkedList<>();
 		int i;
-		if(split && (i=getIndex(e))!=-1) {
-			list.addAll(children[i].retrieve(e));
+		if(split && (i=getIndex(a))!=-1) {
+			list.addAll(children[i].retrieve(a));
 		}
-		list.addAll(entities);
+		list.addAll(aabbs);
 		return list;
 	}
 

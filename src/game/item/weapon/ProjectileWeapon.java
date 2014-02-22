@@ -22,9 +22,8 @@ public class ProjectileWeapon extends Weapon {
 			e.setSource(usedBy);
 			
 			int dir=usedBy.getDirection();
-			e.setDirection(dir);
-			
-			Vec2D pos=new Vec2D(usedBy.getCenterPos());
+			Vec2D pos=new Vec2D(usedBy.getCenter());
+			Vec2D vel=new Vec2D();
 			switch(dir) {
 			case Direction.DOWN:
 				pos.add(0, 0.5*(usedBy.getHeight()+e.getHeight()));
@@ -41,6 +40,7 @@ public class ProjectileWeapon extends Weapon {
 			default:
 				throw new RuntimeException("Invalid direction: "+dir);
 			}
+			e.setVelocity(vel);
 			e.moveTo(pos);
 			
 			game.getMap().addEntity(e);			

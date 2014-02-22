@@ -2,27 +2,19 @@ package game.algorithms.collision;
 
 import game.math.Vec2D;
 
-import java.awt.geom.Rectangle2D;
-
-public class AABB { // Axis Aligned Bounding Box
+public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
+	
 	private Vec2D position;
 	private Vec2D dimensions;
-	private boolean solid;
 	
 	public AABB(double x, double y, double width, double height) {
-		this(x, y, width, height, true);
-	}
-	
-	public AABB(double x, double y, double width, double height, boolean isSolid) {
 		position=new Vec2D(x, y);
 		dimensions=new Vec2D(width, height);
-		solid=isSolid;
 	}
 	
 	public AABB(AABB other) {
 		position=new Vec2D(other.position);
 		dimensions=new Vec2D(other.dimensions);
-		this.solid=other.solid;
 	}
 	
 	public double getX() {
@@ -33,20 +25,20 @@ public class AABB { // Axis Aligned Bounding Box
 		return position.getY();
 	}
 	
-	public double getWidth() {
-		return dimensions.getX();
-	}
-	
-	public double getHeight() {
-		return dimensions.getY();
+	public Vec2D getPos() {
+		return new Vec2D(position.getX(), position.getY());
 	}
 	
 	public Vec2D getCenter() {
 		return new Vec2D(position.getX()+dimensions.getX()/2, position.getY()+dimensions.getY()/2);
 	}
 	
-	public boolean isSolid() {
-		return solid;
+	public double getWidth() {
+		return dimensions.getX();
+	}
+	
+	public double getHeight() {
+		return dimensions.getY();
 	}
 	
 	public void move(double dx, double dy) {
@@ -57,28 +49,41 @@ public class AABB { // Axis Aligned Bounding Box
 		position.add(delta);
 	}
 	
-	/**
-	 * Checks if this AABB, when translated by dx and dy intersects with the other AABB.
-	 * 
-	 * @param other - Check for intersection
-	 * @param dx - Check for intersection when the x position of this AABB have changed this much 
-	 * @param dy - Check for intersection when the y position of this AABB have changed this much
-	 * @return If this AABB when translated by dx and dy intersects with the other AABB.
-	 */
-	public boolean intersects(AABB other, double dx, double dy) {
-		return intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight(), dx, dy);
+	public void moveTo(Vec2D newPos) {
+		move( Vec2D.sub( newPos, position ) );
 	}
 	
-	public boolean intersects(double x, double y, double w, double h, double dx, double dy) {
-		return new Rectangle2D.Double(getX()+dx, getY()+dy, getWidth(), getHeight()).intersects(x, y, w, h);
+	public boolean intersects(AABB other) {
+		return intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+	}
+	
+	public boolean intersects(double x, double y, double w, double h) {
+		return this.getX() <= (x+w)
+				&& x <= (this.getX()+this.getWidth())
+				&& this.getY() <= (y+h)
+				&& y <= (this.getY()+this.getHeight());
 	}
 	
 	public boolean contains(AABB other) {
-		return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight()).contains(other.getX(), other.getY(), other.getWidth(), other.getHeight());
+		return this.getX() <= other.getX()
+				&& this.getY() <= other.getY()
+				&& this.getX()+this.getWidth() >= other.getX()+other.getWidth()
+				&& this.getY()+this.getHeight() >= other.getY()+other.getHeight();
 	}
 	
 	@Override
 	public String toString() {
 		return "["+getX()+", "+getY()+", "+getWidth()+", "+getHeight()+"]";
+	}
+
+	@Override
+	public int compareTo(AABB o) {
+		if(this.getY()>o.getY()) {
+			return 1;
+		} else if(this.getY()<o.getY()) {
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 }

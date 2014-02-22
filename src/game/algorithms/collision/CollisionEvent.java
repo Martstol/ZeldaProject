@@ -1,7 +1,5 @@
 package game.algorithms.collision;
 
-import game.entity.Entity;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -13,33 +11,21 @@ public class CollisionEvent implements Iterable<Collision> {
 		collisions=new ArrayList<Collision>(2);
 	}
 	
-	public int getNumberOfCollisions() {
-		return collisions.size();
+	public void add(Collision c) {
+		collisions.add(c);
 	}
 	
-	public Collision getCollision(int i) {
-		return collisions.get(i);
-	}
-	
-	public void addEntity(Entity e) {
-		collisions.add(new EntityCollision(e));
-	}
-	
-	public void addTile(int x, int y) {
-		collisions.add(new TileCollision(x, y));
-	}
-	
-	public void addEvent(CollisionEvent event) {
+	public void add(CollisionEvent event) {
 		collisions.addAll(event.collisions);
 	}
 
+	public boolean collisionOccurred() {
+		return !collisions.isEmpty();
+	}
+	
 	@Override
 	public Iterator<Collision> iterator() {
 		return collisions.iterator();
-	}
-	
-	public boolean collisionOccurred() {
-		return collisions.size()!=0;
 	}
 
 }

@@ -3,7 +3,6 @@ package game.item.weapon;
 import game.Game;
 import game.algorithms.collision.Collision;
 import game.algorithms.collision.CollisionEvent;
-import game.algorithms.collision.EntityCollision;
 import game.entity.Entity;
 import game.entity.mob.Mob;
 
@@ -13,21 +12,29 @@ public class ProjectileEntity extends Entity {
 	private Entity source;
 	
 	private double lifeTime;
+	
+	private double maxVelocity;
 
 	public ProjectileEntity(double width, double height, double maxVelocity, 
 			String spriteName, int spriteWidth, int spriteHeight, double lifeTime) {
-		super(width, height, maxVelocity, spriteName, spriteWidth, spriteHeight);
+		super(width, height, spriteName, spriteWidth, spriteHeight);
 		this.lifeTime=lifeTime;
+		this.maxVelocity=maxVelocity;
 	}
 	
 	public ProjectileEntity(ProjectileEntity other) {
 		super(other);
 		this.lifeTime=other.lifeTime;
+		this.maxVelocity=other.maxVelocity;
 		
 	}
 	
 	public void setWeapon(Weapon weapon) {
 		this.weapon=weapon;
+	}
+	
+	public double getMaxVelocity() {
+		return maxVelocity;
 	}
 	
 	public Weapon getWeapon() {
@@ -44,10 +51,9 @@ public class ProjectileEntity extends Entity {
 
 	@Override
 	public void tick(Game game, double dt) {
-		animate(true, dt);
-		setVelocity(getDirection(), dt);
-		collisionResolution(collisionDetection(game.getMap()));
+		updateAnimation(dt);
 		move();
+		collisionResolution(collisionDetection(game.getMap()));
 		lifeTime-=dt;
 		if(lifeTime<=0) {
 			markForRemoval();
@@ -59,19 +65,15 @@ public class ProjectileEntity extends Entity {
 		if(event.collisionOccurred()) {
 			markForRemoval();
 			for(Collision col : event) {
-				if(col instanceof EntityCollision) {
-					Entity e = ((EntityCollision)col).getEntity();
-					if(e!=source && e instanceof Mob) {
-						((Mob)e).damage(weapon, this);
-					}
+				if(((Entity)col.getAABB()) instanceof Mob) {
+					((Mob)col.getAABB()).damage(getWeapon(), this);
 				}
 			}
 		}
 	}
 	
 	public ProjectileEntity copy() {
-		ProjectileEntity cpy=new ProjectileEntity(this);
-		return cpy;
+		return new ProjectileEntity(this);
 	}
 
 }
