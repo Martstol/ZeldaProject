@@ -1,6 +1,5 @@
 package game.container.quadtree;
 
-import game.Constants;
 import game.algorithms.Pair;
 import game.algorithms.collision.AABB;
 
@@ -19,11 +18,12 @@ public class QuadPerformanceTest {
 		 * (Given that the entities are uniformly distributed across the map).
 		 * Will of course also work nicely if the entities are in several clusters across the map.
 		 */
-		double mapWidth=50;
-		double mapHeight=50;
-		int count=100;
-		long seed = 1394369439114l;
+		double mapWidth=1000;
+		double mapHeight=1000;
+		int count=50000;
+		long seed = System.currentTimeMillis();
 		Random r = new Random(seed);
+		System.out.println("Seed: "+seed);
 		List<AABB> list=new ArrayList<>(count);
 		Quad<AABB> tree=new Quad<>(new AABB(0, 0, mapWidth, mapHeight));
 		HashSet<Pair<AABB, AABB>> collisions1 = new HashSet<>();
@@ -88,6 +88,14 @@ public class QuadPerformanceTest {
 			System.out.println("Test was successful!");
 		} else {
 			System.out.println("The Quad implementation failed the test!");
+			
+			Collection<Pair<AABB, AABB>> fails = new HashSet<>();
+			for(Pair<AABB, AABB> p : collisions1) {
+				if(!collisions2.contains(p)) {
+					fails.add(p);
+				}
+			}
+			System.out.println(fails);
 		}
 	}
 

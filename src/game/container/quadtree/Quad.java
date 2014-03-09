@@ -5,6 +5,7 @@ import game.algorithms.collision.AABB;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Quad<T extends AABB> {
@@ -29,7 +30,11 @@ public class Quad<T extends AABB> {
 		this.level = level;
 		this.boundary = boundary;
 		children = new ArrayList<>(4);
-		content = new ArrayList<>(QUAD_CAPACITY);
+		content = newContainer();
+	}
+	
+	private Collection<T> newContainer() {
+		return new ArrayList<T>();
 	}
 	
 	private void split() {
@@ -50,6 +55,20 @@ public class Quad<T extends AABB> {
 		split = true;
 	}
 	
+	private Collection<T> getAllContent() {
+		Collection<T> col = newContainer();
+		col.addAll(content);
+		
+		if(split) {
+			col.addAll(children.get(NW).getAllContent());
+			col.addAll(children.get(NE).getAllContent());
+			col.addAll(children.get(SW).getAllContent());
+			col.addAll(children.get(SE).getAllContent());
+		}
+		
+		return col;
+	}
+	
 	public int size() {
 		int s = content.size();
 		if(split) {
@@ -64,7 +83,7 @@ public class Quad<T extends AABB> {
 	public void clear() {
 		split = false;
 		children = new ArrayList<>(4);
-		content = new ArrayList<>(QUAD_CAPACITY);
+		content = newContainer();
 	}
 	
 	private int getIndex(T a) {
@@ -99,14 +118,17 @@ public class Quad<T extends AABB> {
 				return;
 			}
 		}
+		
 		// This Quad had no children or the entity did not fit into any of the children.
 		content.add(a);
 		
 		// If this Quad has gone over the Quad capacity and it is not at max level,
 		// we want to split if we haven't already and then move all of this Quad's
 		// elements to the child Quads.
-		if(!split && content.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
-			split();
+		if(content.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
+			if(!split) {
+				split();				
+			}
 			
 			Iterator<T> it = content.iterator();
 			while(it.hasNext()) {
@@ -122,20 +144,19 @@ public class Quad<T extends AABB> {
 	}
 	
 	public Collection<T> retrieve(T a) {
-		Collection<T> col = new ArrayList<>();
+		Collection<T> col = newContainer();
 		
 		if(split) {
 			int i=getIndex(a);
 			if(i == INVALID) {
-				col.addAll(children.get(NW).content);
-				col.addAll(children.get(NE).content);
-				col.addAll(children.get(SW).content);
-				col.addAll(children.get(SE).content);
+				col.addAll(getAllContent());
 			} else {
-				col.addAll(children.get(i).retrieve(a));				
+				col.addAll(children.get(i).retrieve(a));
+				col.addAll(content);
 			}
+		} else {
+			col.addAll(getAllContent());
 		}
-		col.addAll(content);
 		
 		return col;
 	}
