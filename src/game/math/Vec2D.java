@@ -129,7 +129,12 @@ public class Vec2D {
 	
 	@Override
 	public int hashCode() {
-		return (int)(1000*x+y);
+		long l1 = Double.doubleToRawLongBits(x);
+		long l2 = Double.doubleToRawLongBits(y);
+		long l3 = l1 ^ l2;
+		int i1 = (int) (l3 >>> 32);
+		int i2 = (int) (l3 & 0x00000000FFFFFFFF);
+		return i1 ^ i2;
 	}
 	
 	@Override
