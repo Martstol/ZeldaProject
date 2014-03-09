@@ -3,7 +3,9 @@ package game.container.quadtree;
 import game.Constants;
 import game.algorithms.collision.AABB;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 public class QuadPerformanceTest {
@@ -17,14 +19,15 @@ public class QuadPerformanceTest {
 		 */
 		double mapWidth=1000;
 		double mapHeight=1000;
-		Random r = new Random(System.currentTimeMillis());
-		Quad tree=new Quad(new AABB(0, 0, mapWidth, mapHeight));
-		LinkedList<AABB> list=new LinkedList<>();
+		Random r = new Random(0);
+		Quad<AABB> tree=new Quad<>(new AABB(0, 0, mapWidth, mapHeight));
 		
 		int count=20000+(int)(r.nextDouble()*2); // Making sure the compiler can't optimize away the counting
+		List<AABB> list=new ArrayList<>(count);
+		
 		for(int i=0; i<count; i++) {
-			double x = (r.nextDouble()*mapWidth)-Constants.PLAYER_SPRITE_WIDTH;
-			double y = (r.nextDouble()*mapHeight)-Constants.PLAYER_SPRITE_HEIGHT;
+			double x = (r.nextDouble() * (mapWidth-Constants.DEFAULT_ENTITY_WIDTH));
+			double y = (r.nextDouble() * (mapHeight-Constants.DEFAULT_ENTITY_HEIGHT));
 			AABB e = new AABB(x, y, 1, 1);
 			list.add(e);
 		}
@@ -35,11 +38,15 @@ public class QuadPerformanceTest {
 		 * Warm up loop
 		 */
 		long l=0;
+		long c1=0;
 		long t=0;
 		for(AABB a : list) {
 			for(AABB b : list) {
 				if(a!=b) {
 					l++;
+					if(a.intersects(b)) {
+						c1++;
+					}
 				}
 			}
 		}
@@ -49,11 +56,15 @@ public class QuadPerformanceTest {
 		 * Actually measured loop
 		 */
 		l=0;
+		c1=0;
 		t=System.currentTimeMillis();
 		for(AABB a : list) {
 			for(AABB b : list) {
 				if(a!=b) {
 					l++;
+					if(a.intersects(b)) {
+						c1++;
+					}
 				}
 			}
 		}
@@ -64,15 +75,19 @@ public class QuadPerformanceTest {
 		 * Warm up loop, also the duration it takes to clear a full tree needs to be measured
 		 */
 		l=0;
+		long c2=0;
 		t=0;
 		for(AABB e : list) {
 			tree.insert(e);
 		}
 		for(AABB a : list) {
-			LinkedList<AABB> colList=tree.retrieve(a);
+			Collection<AABB> colList=tree.retrieve(a);
 			for(AABB b : colList) {
 				if(a!=b) {
-					l++;					
+					l++;
+					if(a.intersects(b)) {
+						c2++;
+					}
 				}
 			}
 		}
@@ -82,21 +97,33 @@ public class QuadPerformanceTest {
 		 * Actually measured loop
 		 */
 		l=0;
+		c2=0;
 		t=System.currentTimeMillis();
 		tree.clear();
 		for(AABB e : list) {
 			tree.insert(e);
 		}
 		for(AABB a : list) {
-			LinkedList<AABB> colList=tree.retrieve(a);
+			Collection<AABB> colList=tree.retrieve(a);
 			for(AABB b : colList) {
 				if(a!=b) {
-					l++;					
+					l++;
+					if(a.intersects(b)) {
+						c2++;
+					}
 				}
 			}
 		}
 		System.out.println(l);
 		System.out.println("Quad tree: "+(System.currentTimeMillis()-t));
+		
+		if(c1 == c2) {
+			System.out.println("Test was successful!");
+		} else {
+			System.out.println("The Quad implementation failed the test!");
+		}
+		System.out.println("c1 = " + c1);
+		System.out.println("c2 = " + c2);
 	}
 
 }
