@@ -18,9 +18,10 @@ public class QuadPerformanceTest {
 		 * (Given that the entities are uniformly distributed across the map).
 		 * Will of course also work nicely if the entities are in several clusters across the map.
 		 */
+		boolean doubleForTest = false;
 		double mapWidth=1000;
 		double mapHeight=1000;
-		int count=50000;
+		int count=100000;
 		long seed = System.currentTimeMillis();
 		Random r = new Random(seed);
 		System.out.println("Seed: "+seed);
@@ -42,22 +43,25 @@ public class QuadPerformanceTest {
 		/*
 		 * Double for
 		 */
-		long l=0;
-		long t=System.currentTimeMillis();
-		for(AABB a : list) {
-			for(AABB b : list) {
-				if(a!=b) {
-					l++;
-					if(a.intersects(b)) {
-						collisions1.add(new Pair<>(a, b));
+		long l, t;
+		if(doubleForTest) {			
+			l=0;
+			t=System.currentTimeMillis();
+			for(AABB a : list) {
+				for(AABB b : list) {
+					if(a!=b) {
+						l++;
+						if(a.intersects(b)) {
+							collisions1.add(new Pair<>(a, b));
+						}
 					}
 				}
 			}
+			System.out.println("DOUBLE FOR LOOP DATA: ");
+			System.out.println("Number of intersection tests = " + l);
+			System.out.println("Intersections found = " + collisions1.size());
+			System.out.println("Time taken = " + (System.currentTimeMillis()-t) + "\n");
 		}
-		System.out.println("DOUBLE FOR LOOP DATA: ");
-		System.out.println("Number of intersection tests = " + l);
-		System.out.println("Intersections found = " + collisions1.size());
-		System.out.println("Time taken = " + (System.currentTimeMillis()-t) + "\n");
 		
 		/*
 		 * Quad tree
@@ -84,18 +88,20 @@ public class QuadPerformanceTest {
 		System.out.println("Intersections found = " + collisions2.size());
 		System.out.println("Time taken = "+(System.currentTimeMillis()-t) + "\n");
 		
-		if(collisions1.size() == collisions2.size()) {
-			System.out.println("Test was successful!");
-		} else {
-			System.out.println("The Quad implementation failed the test!");
-			
-			Collection<Pair<AABB, AABB>> fails = new HashSet<>();
-			for(Pair<AABB, AABB> p : collisions1) {
-				if(!collisions2.contains(p)) {
-					fails.add(p);
+		if(doubleForTest) {			
+			if(collisions1.size() == collisions2.size()) {
+				System.out.println("Test was successful!");
+			} else {
+				System.out.println("The Quad implementation failed the test!");
+				
+				Collection<Pair<AABB, AABB>> fails = new HashSet<>();
+				for(Pair<AABB, AABB> p : collisions1) {
+					if(!collisions2.contains(p)) {
+						fails.add(p);
+					}
 				}
+				System.out.println(fails);
 			}
-			System.out.println(fails);
 		}
 	}
 
