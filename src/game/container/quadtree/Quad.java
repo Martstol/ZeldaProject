@@ -50,6 +50,17 @@ public class Quad<T extends AABB> {
 		split = true;
 	}
 	
+	public int size() {
+		int s = content.size();
+		if(split) {
+			s += children.get(NW).size();
+			s += children.get(NE).size();
+			s += children.get(SW).size();
+			s += children.get(SE).size();
+		}
+		return s;
+	}
+	
 	public void clear() {
 		split = false;
 		children = new ArrayList<>(4);
@@ -94,10 +105,8 @@ public class Quad<T extends AABB> {
 		// If this Quad has gone over the Quad capacity and it is not at max level,
 		// we want to split if we haven't already and then move all of this Quad's
 		// elements to the child Quads.
-		if(content.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
-			if(!split) {
-				split();
-			}
+		if(!split && content.size() > QUAD_CAPACITY && level < MAX_LEVEL) {
+			split();
 			
 			Iterator<T> it = content.iterator();
 			while(it.hasNext()) {
@@ -108,15 +117,23 @@ public class Quad<T extends AABB> {
 					it.remove();
 				}
 			}
+			
 		}
 	}
 	
 	public Collection<T> retrieve(T a) {
 		Collection<T> col = new ArrayList<>();
 		
-		int i;
-		if(split && (i=getIndex(a)) != INVALID) {
-			col.addAll(children.get(i).retrieve(a));
+		if(split) {
+			int i=getIndex(a);
+			if(i == INVALID) {
+				col.addAll(children.get(NW).content);
+				col.addAll(children.get(NE).content);
+				col.addAll(children.get(SW).content);
+				col.addAll(children.get(SE).content);
+			} else {
+				col.addAll(children.get(i).retrieve(a));				
+			}
 		}
 		col.addAll(content);
 		
