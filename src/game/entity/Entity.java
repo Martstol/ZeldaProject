@@ -148,7 +148,7 @@ public abstract class Entity extends GameObject {
 	public void moveTo(Vec2D newPos) {
 		Vec2D v = Vec2D.sub( newPos, getPos() );
 		spritePos.add(v);
-		super.moveTo(v);
+		super.move(v);
 	}
 	
 	public void updateAnimation(double dt) {
