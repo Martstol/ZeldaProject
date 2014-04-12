@@ -2,6 +2,8 @@ package game.math;
 
 public class Vec2D {
 	
+	//TODO: Make Vec2D immutable
+	
 	private double x, y;
 	
 	public Vec2D() {
@@ -57,6 +59,10 @@ public class Vec2D {
 	
 	public double getY() {
 		return y;
+	}
+	
+	public boolean isNullVector() {
+		return x==0 && y==0;
 	}
 	
 	public void add(Vec2D v) {
@@ -116,8 +122,7 @@ public class Vec2D {
 	}
 	
 	public void validate() {
-		if (x==Double.NaN || x==Double.NEGATIVE_INFINITY || x==Double.POSITIVE_INFINITY || 
-			y==Double.NaN || y==Double.NEGATIVE_INFINITY || y==Double.POSITIVE_INFINITY) {
+		if (Double.isInfinite(x) || Double.isNaN(x) || Double.isInfinite(y) || Double.isNaN(y)) {
 			throw new RuntimeException("Invalid vector: "+this.toString());
 		}
 	}

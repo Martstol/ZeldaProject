@@ -1,10 +1,9 @@
 package game.item.weapon;
 
 import game.Game;
-import game.algorithms.collision.Collision;
-import game.algorithms.collision.CollisionEvent;
+import game.algorithms.collision.CollisionList;
+import game.algorithms.collision.GameObject;
 import game.entity.Entity;
-import game.entity.mob.Mob;
 
 public class ProjectileEntity extends Entity {
 	
@@ -53,7 +52,6 @@ public class ProjectileEntity extends Entity {
 	public void tick(Game game, double dt) {
 		updateAnimation(dt);
 		move();
-		collisionResolution(collisionDetection(game.getMap()));
 		lifeTime-=dt;
 		if(lifeTime<=0) {
 			markForRemoval();
@@ -61,18 +59,11 @@ public class ProjectileEntity extends Entity {
 	}
 	
 	@Override
-	public void collisionResolution(CollisionEvent event) {
-		if(event.collisionOccurred()) {
-			markForRemoval();
-			for(Collision col : event) {
-				if(((Entity)col.getAABB()) instanceof Mob) {
-					((Mob)col.getAABB()).damage(getWeapon(), this);
-				}
-			}
-		}
+	public void collisionResponse(CollisionList event) {
+		
 	}
 	
-	public ProjectileEntity copy() {
+	public GameObject createCopy() {
 		return new ProjectileEntity(this);
 	}
 

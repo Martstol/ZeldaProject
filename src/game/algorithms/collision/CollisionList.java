@@ -1,22 +1,23 @@
 package game.algorithms.collision;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
-public class CollisionEvent implements Iterable<Collision> {
+public class CollisionList implements Iterable<Collision> {
 	
-	private ArrayList<Collision> collisions;
+	private Collection<Collision> collisions;
 	
-	public CollisionEvent() {
-		collisions=new ArrayList<Collision>(2);
+	public CollisionList() {
+		collisions=new ArrayList<Collision>();
 	}
 	
 	public void add(Collision c) {
 		collisions.add(c);
 	}
 	
-	public void add(CollisionEvent event) {
-		collisions.addAll(event.collisions);
+	public void add(CollisionList l) {
+		collisions.addAll(l.collisions);
 	}
 
 	public boolean collisionOccurred() {

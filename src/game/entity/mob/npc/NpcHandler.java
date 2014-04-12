@@ -5,33 +5,46 @@ import game.algorithms.pathfinding.Node;
 import game.algorithms.pathfinding.Path;
 import game.entity.mob.Mob;
 import game.entity.mob.MobHandler;
+import game.io.InputHandler;
+import game.math.Vec2D;
 
 import java.util.Stack;
 
 public class NpcHandler extends MobHandler {
 	
-	private Stack<Node> path=Path.emptyPath;
+	private Stack<Node> path = Path.emptyPath;
+	private Vec2D oldPlayerPos = new Vec2D();
 
 	@Override
 	public void tick(Game game, double dt) {
-		attack = false;
+		setAttacking(false);
+		if(InputHandler.aiPause) {
+			setMovement(0, 0);
+			return;
+		}
 		
-		if(!path.isEmpty() && path.peek().contains(getMob())) {
+		Mob p = game.getPlayer();
+		Mob m = getMob();
+		
+		if(!path.isEmpty() && path.peek().contains(m)) {
 			path.pop();
 		}
 		
-		Mob p=game.getPlayer();
-		if(path.isEmpty()) {
-			path=Path.aStar(getMob().getX(), getMob().getY(), p.getX(), p.getY(), game.getMap());
-		} else {
-			Node n=path.peek();
-			double dx=n.x-getMob().getX();
-			double dy=n.y-getMob().getY();
+		
+		if(path.isEmpty() || Vec2D.distanceSquared(p.getPos(), oldPlayerPos) > 9.0) {
+			path = Path.aStar(m.getX(), m.getY(), p.getX(), p.getY(), game.getMap());
+			oldPlayerPos.set(p.getX(), p.getY());
+		}
+		
+		if(!path.isEmpty()) {			
+			Node n = path.peek();
+			double dx = n.x - m.getX();
+			double dy = n.y - m.getY();
 			
-			if(getMob().getX()>n.x && getMob().getX()+getMob().getWidth()<n.x+1) {
+			if(m.getX() > n.x && m.getX()+m.getWidth() < n.x+1) {
 				dx=0;
 			}
-			if(getMob().getY()>n.y && getMob().getY()+getMob().getHeight()<n.y+1) {
+			if(m.getY() > n.y && m.getY()+m.getHeight() < n.y+1) {
 				dy=0;
 			}
 			
@@ -46,9 +59,10 @@ public class NpcHandler extends MobHandler {
 			} else if(dy<0) {
 				ny=-1;
 			}
-			this.dx=nx;
-			this.dy=ny;
-			move=nx!=0||ny!=0;
+			
+			setMovement(nx, ny);
+		} else {
+			setMovement(0, 0);
 		}
 		
 	}

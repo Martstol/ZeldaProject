@@ -1,13 +1,14 @@
 package game.container.quadtree;
 
 import game.algorithms.collision.AABB;
+import game.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-public class Quad<T extends AABB> {
+public class Quad {
 	
 	private static final int QUAD_CAPACITY = 16;
 	private static final int MAX_LEVEL = 20;
@@ -16,8 +17,8 @@ public class Quad<T extends AABB> {
 	
 	private int level;
 	private AABB boundary;
-	private Collection<T> content;
-	private List<Quad<T>> children;
+	private Collection<Entity> content;
+	private List<Quad> children;
 	private boolean split;
 	
 	public Quad(AABB boundary) {
@@ -32,8 +33,8 @@ public class Quad<T extends AABB> {
 		content = newContainer();
 	}
 	
-	private Collection<T> newContainer() {
-		return new ArrayList<T>();
+	private Collection<Entity> newContainer() {
+		return new ArrayList<Entity>();
 	}
 	
 	private void split() {
@@ -46,16 +47,16 @@ public class Quad<T extends AABB> {
 		double w=0.5*boundary.getWidth();
 		double h=0.5*boundary.getHeight();
 		
-		children.add(new Quad<T>(level+1, new AABB(x, y, w, h))); // NW
-		children.add(new Quad<T>(level+1, new AABB(x+w, y, w, h))); // NE
-		children.add(new Quad<T>(level+1, new AABB(x, y+h, w, h))); // SW
-		children.add(new Quad<T>(level+1, new AABB(x+w, y+h, w, h))); // SE
+		children.add(new Quad(level+1, new AABB(x, y, w, h))); // NW
+		children.add(new Quad(level+1, new AABB(x+w, y, w, h))); // NE
+		children.add(new Quad(level+1, new AABB(x, y+h, w, h))); // SW
+		children.add(new Quad(level+1, new AABB(x+w, y+h, w, h))); // SE
 		
 		split = true;
 	}
 	
-	private Collection<T> getAllContent() {
-		Collection<T> col = newContainer();
+	private Collection<Entity> getAllContent() {
+		Collection<Entity> col = newContainer();
 		col.addAll(content);
 		
 		if(split) {
@@ -85,29 +86,23 @@ public class Quad<T extends AABB> {
 		content = newContainer();
 	}
 	
-	private int getIndex(T a) {
+	private int getIndex(Entity a) {
 		if(!split) {
 			throw new RuntimeException("Quad is not split.");
-		} else if(children.get(NW).boundary.contains(a)) {
+		} else if(children.get(NW).boundary.contains(a.getAABB())) {
 			return NW;
-		} else if(children.get(NE).boundary.contains(a)) {
+		} else if(children.get(NE).boundary.contains(a.getAABB())) {
 			return NE;
-		} else if(children.get(SW).boundary.contains(a)) {
+		} else if(children.get(SW).boundary.contains(a.getAABB())) {
 			return SW;
-		} else if(children.get(SE).boundary.contains(a)) {
+		} else if(children.get(SE).boundary.contains(a.getAABB())) {
 			return SE;
 		} else {
 			return INVALID;
 		}
 	}
 	
-	public void insertAll(Collection<T> col) {
-		for(T a : col) {
-			insert(a);
-		}
-	}
-	
-	public void insert(T a) {
+	public void insert(Entity a) {
 		// If this Quad has any children (is split),
 		// try to add the entity to the child Quads.
 		if(split) {
@@ -129,9 +124,9 @@ public class Quad<T extends AABB> {
 				split();				
 			}
 			
-			Iterator<T> it = content.iterator();
+			Iterator<Entity> it = content.iterator();
 			while(it.hasNext()) {
-				T t = it.next();
+				Entity t = it.next();
 				int i=getIndex(t);
 				if(i!=INVALID) {
 					children.get(i).insert(t);
@@ -142,8 +137,8 @@ public class Quad<T extends AABB> {
 		}
 	}
 	
-	public Collection<T> retrieve(T a) {
-		Collection<T> col = newContainer();
+	public Collection<Entity> retrieve(Entity a) {
+		Collection<Entity> col = newContainer();
 		
 		if(split) {
 			int i=getIndex(a);

@@ -2,6 +2,7 @@ package game.algorithms.pathfinding;
 
 import game.map.Map;
 import game.math.GameMath;
+import game.math.Vec2D;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +44,7 @@ public class Path {
 		while(!queue.isEmpty()) {
 			Node current=queue.peek();
 			if(current.equals(goal)) {
-				return reconstructPath(previous, current);
+				return simplifyPath(reconstructPath(previous, current), new Vec2D(startX, startY), new Vec2D(goalX, goalY));
 			}
 			queue.poll();
 			visited.add(current);
@@ -123,6 +124,17 @@ public class Path {
 			path.push(n);
 			n=previous.get(n);
 		}
+		return path;
+	}
+	
+	public static Stack<Node> simplifyPath(Stack<Node> path, Vec2D currentPos, Vec2D targetPos) {
+		Node top = path.peek();
+		Vec2D topPos = new Vec2D(top.x, top.y);
+		
+		if(Vec2D.distanceSquared(topPos, targetPos) > Vec2D.distanceSquared(currentPos, targetPos)) {
+			path.pop();
+		}
+
 		return path;
 	}
 	

@@ -26,7 +26,7 @@ public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
 	}
 	
 	public Vec2D getPos() {
-		return new Vec2D(position.getX(), position.getY());
+		return position;
 	}
 	
 	public Vec2D getCenter() {
@@ -57,11 +57,15 @@ public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
 		return intersects(other.getX(), other.getY(), other.getWidth(), other.getHeight());
 	}
 	
+	public boolean intersects(AABB other, Vec2D v) {
+		return intersects(other.getX()+v.getX(), other.getY()+v.getY(), other.getWidth(), other.getHeight());
+	}
+	
 	public boolean intersects(double x, double y, double w, double h) {
-		return this.getX() <= (x+w)
-				&& x <= (this.getX()+this.getWidth())
-				&& this.getY() <= (y+h)
-				&& y <= (this.getY()+this.getHeight());
+		return this.getX() < (x+w)
+				&& x < (this.getX()+this.getWidth())
+				&& this.getY() < (y+h)
+				&& y < (this.getY()+this.getHeight());
 	}
 	
 	public boolean contains(AABB other) {
@@ -69,6 +73,22 @@ public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
 				&& this.getY() <= other.getY()
 				&& this.getX()+this.getWidth() >= other.getX()+other.getWidth()
 				&& this.getY()+this.getHeight() >= other.getY()+other.getHeight();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj  instanceof AABB) {
+			AABB other = (AABB) obj;
+			return this.position.equals(other.position) 
+					&& this.dimensions.equals(other.dimensions);
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return position.hashCode() ^ dimensions.hashCode();
 	}
 	
 	@Override
@@ -86,4 +106,5 @@ public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
 			return 0;
 		}
 	}
+	
 }

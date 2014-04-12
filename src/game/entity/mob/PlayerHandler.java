@@ -13,10 +13,9 @@ public class PlayerHandler extends MobHandler {
 
 	@Override
 	public void tick(Game game, double dt) {
-		attack = keys.attack.isPressed();
+		setAttacking(keys.attack.isPressed());
 		
-		dx=0;
-		dy=0;
+		int dx=0, dy=0;
 		if (keys.down.isPressed()) {
 			++dy;
 		}
@@ -29,8 +28,8 @@ public class PlayerHandler extends MobHandler {
 		if (keys.left.isPressed()) {
 			--dx;
 		}
+		setMovement(dx, dy);
 		
-		move = dx!=0 || dy!=0;
 	}
 
 }

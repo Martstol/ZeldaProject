@@ -1,14 +1,19 @@
 package game.entity;
 
 import game.Constants;
+import game.Game;
 import game.algorithms.collision.AABB;
-import game.algorithms.collision.GameObject;
+import game.algorithms.collision.CollisionList;
 import game.graphic.SpriteResources;
 import game.math.Vec2D;
 
 import java.awt.image.BufferedImage;
 
-public abstract class Entity extends GameObject {
+public abstract class Entity implements Comparable<Entity> {
+	
+	private AABB aabb;
+	private Vec2D vel;
+	private boolean solid;
 	
 	private BufferedImage[][] spriteset;
 	private Vec2D spritePos;
@@ -35,7 +40,9 @@ public abstract class Entity extends GameObject {
 	}
 	
 	public Entity(double x, double y, double width, double height, boolean solid, String spriteName, int spriteWidth, int spriteHeight, double animationDelayLength) {
-		super(x, y, width, height, solid);
+		this.solid = solid;
+		aabb = new AABB(x, y, width, height);
+		vel=new Vec2D();
 		
 		double spriteX=(x + 0.5*width - spriteWidth/(2.0*Constants.TILE_WIDTH));
 		double spriteY=(y + 0.5*height - spriteHeight/(2.0*Constants.TILE_HEIGHT));
@@ -56,7 +63,8 @@ public abstract class Entity extends GameObject {
 	 * @param other - Entity to copy
 	 */
 	public Entity(Entity other) {
-		super(other);
+		solid = other.solid;
+		aabb = new AABB(other.aabb);
 		
 		spritePos=new Vec2D(other.spritePos);
 		spriteset=other.spriteset;
@@ -67,6 +75,34 @@ public abstract class Entity extends GameObject {
 		animationLength=other.animationLength;
 		animationDelayLength=other.animationDelayLength;
 		currentAnimationDelay=other.currentAnimationDelay;
+	}
+	
+	public AABB getAABB() {
+		return aabb;
+	}
+	
+	public double getX() {
+		return aabb.getX();
+	}
+	
+	public double getY() {
+		return aabb.getY();
+	}
+	
+	public Vec2D getCenter() {
+		return aabb.getCenter();
+	}
+	
+	public Vec2D getPos() {
+		return aabb.getPos();
+	}
+	
+	public double getWidth() {
+		return aabb.getWidth();
+	}
+	
+	public double getHeight() {
+		return aabb.getHeight();
 	}
 	
 	public int getDirection() {
@@ -89,6 +125,7 @@ public abstract class Entity extends GameObject {
 		this.direction=direction%4;
 	}
 	
+	//TODO: Replace with a lookup table
 	public void setDirection(int dx, int dy) {
 		if (direction==Direction.SOUTH) {
 			if (dy==-1) {
@@ -125,33 +162,57 @@ public abstract class Entity extends GameObject {
 		}
 	}
 	
-	@Override
-	public void move() {
-		Vec2D v = getVel();
-		spritePos.add(v);
-		super.move(v);
+	public double getVx() {
+		return vel.getX();
 	}
 	
-	@Override
-	public void move(double dx, double dy) {
-		spritePos.add(dx, dy);
-		super.move(dx, dy);
+	public double getVy() {
+		return vel.getY();
 	}
 	
-	@Override
+	public Vec2D getVel() {
+		return vel;
+	}
+	
+	public boolean isSolid() {
+		return solid;
+	}
+	
+	public void setSolid(boolean solid) {
+		this.solid = solid;
+	}
+	
+	public void setVelocity(Vec2D v) {
+		vel.set(v);
+	}
+	
+	public void setVelocity(double vx, double vy) {
+		vel.set(vx, vy);
+	}
+	
+	public void updatePosition() {
+		move(vel);
+	}
+	
 	public void move(Vec2D delta) {
 		spritePos.add(delta);
-		super.move(delta);
+		aabb.move(delta);
 	}
 	
-	@Override
-	public void moveTo(Vec2D newPos) {
-		Vec2D v = Vec2D.sub( newPos, getPos() );
-		spritePos.add(v);
-		super.move(v);
+	public void setPosition(Vec2D newPos) {
+		Vec2D delta = Vec2D.sub( newPos, getPos() );
+		move(delta);
 	}
 	
-	public void updateAnimation(double dt) {
+	public void animate(double dt) {
+		if(vel.isNullVector()) {
+			resetAnimation();
+		} else {
+			updateAnimation(dt);
+		}
+	}
+	
+	private void updateAnimation(double dt) {
 		currentAnimationDelay += dt;
 		if (currentAnimationDelay >= animationDelayLength) {
 			currentAnimationDelay -= animationDelayLength;
@@ -159,7 +220,7 @@ public abstract class Entity extends GameObject {
 		}
 	}
 	
-	public void resetAnimation() {
+	private void resetAnimation() {
 		currentAnimationDelay = 0;
 		currentAnimationStep = 0;
 	}
@@ -173,19 +234,14 @@ public abstract class Entity extends GameObject {
 	}
 	
 	@Override
-	public int compareTo(AABB o) {
-		if(o instanceof Entity) {
-			Entity e = (Entity)o;
-			if(this.getSpriteY() > e.getSpriteY()) {
-				return 1;
-			} else if(this.getSpriteY() < e.getSpriteY()) {
-				return -1;
-			} else {
-				return 0;
-			}
-		} else {
-			return super.compareTo(o);
-		}
+	public int compareTo(Entity o) {
+		return aabb.compareTo(o.aabb);
 	}
+	
+	public abstract void tick(Game game, double dt);
+	
+	public abstract void collisionResponse(CollisionList list);
+	
+	public abstract CollisionList collisionDetection(Game game);
 
 }

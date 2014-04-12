@@ -6,10 +6,10 @@ public abstract class MobHandler {
 	
 	private Mob m;
 	
-	protected boolean attack=false;
-	protected boolean move=false;
-	protected int dx=0;
-	protected int dy=0;
+	private boolean attack=false;
+	private boolean move=false;
+	private int dx=0;
+	private int dy=0;
 	
 	public void setMob(Mob m) {
 		this.m=m;
@@ -19,11 +19,11 @@ public abstract class MobHandler {
 		return m;
 	}
 	
-	public boolean requestingAttack() {
+	public boolean isAttacking() {
 		return attack;
 	}
 	
-	public boolean requestingMovement() {
+	public boolean isMoving() {
 		return move;
 	}
 	
@@ -33,6 +33,22 @@ public abstract class MobHandler {
 	
 	public int getDY() {
 		return dy;
+	}
+	
+	protected void setMovement(int dx, int dy) {
+		if(dx!=0 || dy!=0) {
+			move=true;
+			this.dx=dx;
+			this.dy=dy;
+		} else {
+			move=false;
+			this.dx=0;
+			this.dy=0;
+		}
+	}
+	
+	protected void setAttacking(boolean attacking) {
+		attack = attacking;
 	}
 	
 	public abstract void tick(Game game, double dt);

@@ -26,9 +26,9 @@ public class Game implements ActionListener {
 		
 		//TODO This is just debug stuff
 		player=new Mob(10, 0, Constants.PLAYER_SPRITESET_NAME, Constants.PLAYER_SPRITE_WIDTH, 
-				Constants.PLAYER_SPRITE_HEIGHT, Constants.PLAYER_START_HEALTH, Constants.PLAYER_MAX_VELOCITY, 
-				new PlayerHandler(keys));
-		map=new Map(100, 100, player);
+				Constants.PLAYER_SPRITE_HEIGHT, Constants.PLAYER_START_HEALTH, 
+				Constants.PLAYER_MAX_VELOCITY, true, new PlayerHandler(keys));
+		map=new Map(30, 30, player);
 	}
 	
 	public Mob getPlayer() {
