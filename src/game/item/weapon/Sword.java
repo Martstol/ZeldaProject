@@ -41,9 +41,13 @@ public class Sword extends Weapon {
 			dir.setX(1);
 			break;
 		}
+		
 		for(Entity target : game.getMap().getEntities()) {
-			if(target!=usedBy && target instanceof Mob && hitCheck(target, usedBy, dir)) {
-				((Mob)target).damage(this, usedBy);			
+			if(target!=usedBy && target instanceof Mob 
+					&& hitCheck(target.getAABB(), usedBy.getAABB(), dir)) {
+				
+				((Mob)target).damage(this, usedBy);
+				
 			}
 		}
 	}

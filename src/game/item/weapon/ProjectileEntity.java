@@ -1,14 +1,15 @@
 package game.item.weapon;
 
 import game.Game;
+import game.algorithms.collision.Collision;
 import game.algorithms.collision.CollisionList;
-import game.algorithms.collision.GameObject;
+import game.algorithms.collision.EntityCollision;
 import game.entity.Entity;
+import game.entity.mob.Mob;
 
 public class ProjectileEntity extends Entity {
 	
 	private Weapon weapon;
-	private Entity source;
 	
 	private double lifeTime;
 	
@@ -39,19 +40,11 @@ public class ProjectileEntity extends Entity {
 	public Weapon getWeapon() {
 		return weapon;
 	}
-	
-	public void setSource(Entity e) {
-		this.source=e;
-	}
-	
-	public Entity getSource() {
-		return source;
-	}
 
 	@Override
 	public void tick(Game game, double dt) {
-		updateAnimation(dt);
-		move();
+		animate(dt);
+		updatePosition();
 		lifeTime-=dt;
 		if(lifeTime<=0) {
 			markForRemoval();
@@ -59,12 +52,17 @@ public class ProjectileEntity extends Entity {
 	}
 	
 	@Override
-	public void collisionResponse(CollisionList event) {
-		
-	}
-	
-	public GameObject createCopy() {
-		return new ProjectileEntity(this);
+	public void collisionResponse(CollisionList list) {
+		for(Collision col : list) {
+			markForRemoval();
+			
+			if(col instanceof EntityCollision) {
+				Entity e = ((EntityCollision)col).getEntity();
+				if(e instanceof Mob) {
+					((Mob)e).damage(weapon, this);
+				}
+			}
+		}
 	}
 
 }

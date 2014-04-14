@@ -17,9 +17,8 @@ public class ProjectileWeapon extends Weapon {
 	@Override
 	public void attackTick(Entity usedBy, Game game) {
 		if(projectile!=null) {
-			ProjectileEntity e = (ProjectileEntity)projectile.createCopy();
+			ProjectileEntity e = new ProjectileEntity(projectile);
 			e.setWeapon(this);
-			e.setSource(usedBy);
 			
 			int dir=usedBy.getDirection();
 			Vec2D pos=new Vec2D(usedBy.getCenter());
@@ -41,7 +40,7 @@ public class ProjectileWeapon extends Weapon {
 				throw new RuntimeException("Invalid direction: "+dir);
 			}
 			e.setVelocity(vel);
-			e.moveTo(pos);
+			e.setPosition(pos);
 			
 			game.getMap().addEntity(e);			
 		} else {

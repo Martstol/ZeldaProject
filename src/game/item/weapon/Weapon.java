@@ -16,7 +16,7 @@ public abstract class Weapon extends Item {
 	private double knockbackPower;
 	private int attackStep;
 	private int attackLength;
-	private int damageTick; //The tick of the animation where damage calculation is done.
+	private int damageTick;
 	private double animationDelayLength;
 	private double currentDelayTime;
 	private BufferedImage[][] spriteset;
