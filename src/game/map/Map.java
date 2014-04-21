@@ -50,8 +50,6 @@ public class Map {
 			}
 		}
 		for(int i=0; i<1; i++) {
-			double x=random.nextDouble()*(width-1);
-			double y=random.nextDouble()*(height-1);
 			entities.add(new Mob(0, 0, "green knight", 18, 28, 2, 
 					Constants.DEFAULT_ENTITY_MAX_VEL*0.8, false, new NpcHandler()));
 		}

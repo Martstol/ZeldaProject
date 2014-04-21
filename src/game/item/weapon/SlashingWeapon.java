@@ -7,11 +7,11 @@ import game.entity.Entity;
 import game.entity.mob.Mob;
 import game.math.Vec2D;
 
-public class Sword extends Weapon {
+public class SlashingWeapon extends Weapon {
 	
 	private double r, angle;
 
-	public Sword(String name, String description, double range, double angle, int damage, double knockbackPower, int spriteWidth, int spriteHeight, String sfxName) {
+	public SlashingWeapon(String name, String description, double range, double angle, int damage, double knockbackPower, int spriteWidth, int spriteHeight, String sfxName) {
 		super(name, description, damage, knockbackPower, spriteWidth, spriteHeight, sfxName);
 		this.r=range;
 		this.angle=angle;

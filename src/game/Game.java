@@ -6,7 +6,7 @@ import game.graphic.gui.Button;
 import game.graphic.gui.Gui;
 import game.graphic.gui.Textbox;
 import game.io.Keys;
-import game.item.weapon.Sword;
+import game.item.weapon.SlashingWeapon;
 import game.item.weapon.Weapon;
 import game.map.Map;
 
@@ -30,8 +30,8 @@ public class Game implements ActionListener {
 		player=new Mob(10, 0, Constants.PLAYER_SPRITESET_NAME, Constants.PLAYER_SPRITE_WIDTH, 
 				Constants.PLAYER_SPRITE_HEIGHT, Constants.PLAYER_START_HEALTH, 
 				Constants.PLAYER_MAX_VELOCITY, true, new PlayerHandler(keys));
-		Weapon weapon = new Sword("hero sword", "", 1.0, 60, 1, 0, 46, 46, "sword1");
-		player.setWeapon(weapon);
+		Weapon sword = new SlashingWeapon("hero sword", "", 1.0, 60, 1, 0, 46, 46, "sword1");
+		player.setWeapon(sword);
 		map=new Map(30, 30, player);
 	}
 	
