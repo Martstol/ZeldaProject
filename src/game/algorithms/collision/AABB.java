@@ -12,6 +12,11 @@ public class AABB implements Comparable<AABB> { // Axis Aligned Bounding Box
 		dimensions=new Vec2D(width, height);
 	}
 	
+	public AABB(Vec2D pos, Vec2D dim) {
+		position=new Vec2D(pos);
+		dimensions=new Vec2D(dim);
+	}
+	
 	public AABB(AABB other) {
 		position=new Vec2D(other.position);
 		dimensions=new Vec2D(other.dimensions);
