@@ -31,10 +31,8 @@ public class Pair<T, E> {
 	public boolean equals(Object arg0) {
 		if(arg0 instanceof Pair) {
 			Pair other = ((Pair)arg0);
-			
 			return this.getFirst().equals(other.getFirst()) 
 					&& this.getSecond().equals(other.getSecond());
-			
 		} else {
 			return false;
 		}
